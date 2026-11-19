@@ -1,0 +1,297 @@
+---
+title: "Coastal Beginnings Study"
+subtitle: "Data status and quality report"
+description: "A fictional pregnancy cohort. All data are simulated."
+date: today
+date-format: "MMMM D, YYYY"
+author: "Emma Branch, Source to Sea Data"
+format:
+  html:
+    theme: flatly
+    toc: true
+    toc-location: left
+    embed-resources: true
+    fig-width: 8
+    fig-height: 4.5
+    fig-dpi: 150
+    code-fold: true
+    code-summary: "Show the code"
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup}
+library(tidyverse)
+library(here)
+library(gt)
+library(scales)
+
+participants <- readRDS(here("data", "processed", "participants.rds"))
+qc_issues    <- readRDS(here("data", "processed", "qc_issues.rds"))
+scorecard_path <- here("data", "processed", "qc_scorecard.rds")
+scorecard    <- if (file.exists(scorecard_path)) readRDS(scorecard_path) else NULL
+
+# Colours: three validated categorical colours for the sites, plus neutral ink
+site_colours <- c(
+  "Coastal Community Clinic" = "#2a78d6",
+  "Harbourview Hospital"     = "#eb6834",
+  "Riverbend Midwifery"      = "#1baf7a"
+)
+ink       <- "#0b0b0b"
+ink_soft  <- "#52514e"
+grid_col  <- "#e6e5e1"
+accent    <- "#2a78d6"
+
+theme_report <- function() {
+  theme_minimal(base_size = 12) +
+    theme(
+      text               = element_text(colour = ink),
+      axis.text          = element_text(colour = ink_soft),
+      axis.title         = element_text(colour = ink_soft, size = 11),
+      panel.grid.major   = element_line(colour = grid_col, linewidth = 0.3),
+      panel.grid.minor   = element_blank(),
+      plot.title         = element_text(face = "bold", size = 14),
+      plot.subtitle      = element_text(colour = ink_soft),
+      plot.caption       = element_text(colour = ink_soft, hjust = 0),
+      plot.title.position = "plot",
+      legend.position    = "top",
+      legend.justification = "left"
+    )
+}
+
+n_enrolled <- nrow(participants)
+n_tt       <- sum(participants$has_third_trimester)
+n_birth    <- sum(participants$has_birth)
+n_issues   <- nrow(qc_issues)
+n_records_with_issues <- n_distinct(qc_issues$record_id)
+```
+
+::: {.callout-note}
+This report is generated automatically from a REDCap project by the [REDCap starter kit](https://github.com/emmabranch/redcap-starter-kit). The study and every record in it are fictional, simulated for demonstration.
+:::
+
+## At a glance
+
+```{r glance}
+#| results: asis
+tile <- function(value, label) {
+  glue::glue('<div class="tile"><div class="tile-value">{value}</div><div class="tile-label">{label}</div></div>')
+}
+cat('<div class="tiles">',
+    tile(n_enrolled, "participants enrolled"),
+    tile(percent(n_tt / n_enrolled, 1), "completed the third trimester survey"),
+    tile(percent(n_birth / n_enrolled, 1), "have a birth outcome recorded"),
+    tile(n_issues, glue::glue("data issues to resolve, in {n_records_with_issues} records")),
+    '</div>', sep = "\n")
+```
+
+```{css}
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 1rem 0 1.5rem; }
+.tile { border: 1px solid #e6e5e1; border-radius: 8px; padding: 14px 16px; background: #fcfcfb; }
+.tile-value { font-size: 2rem; font-weight: 700; line-height: 1.1; color: #0b0b0b; }
+.tile-label { font-size: 0.9rem; color: #52514e; margin-top: 4px; }
+```
+
+## Recruitment
+
+```{r recruitment}
+#| fig-height: 4.5
+recruit <- participants |>
+  filter(!is.na(enrol_date), !is.na(site)) |>
+  arrange(enrol_date) |>
+  group_by(site) |>
+  mutate(cumulative = row_number()) |>
+  ungroup()
+
+end_labels <- recruit |>
+  group_by(site) |>
+  slice_max(enrol_date, n = 1, with_ties = FALSE) |>
+  ungroup()
+
+ggplot(recruit, aes(enrol_date, cumulative, colour = site)) +
+  geom_step(linewidth = 0.9) +
+  geom_point(data = end_labels, size = 2.5) +
+  geom_text(data = end_labels, aes(label = paste0(site, " (", cumulative, ")")),
+            hjust = 0, nudge_x = 6, size = 3.6, colour = ink) +
+  scale_colour_manual(values = site_colours, guide = "none") +
+  scale_x_date(date_labels = "%b %Y", expand = expansion(mult = c(0.02, 0.45))) +
+  coord_cartesian(clip = "off") +
+  labs(title = "Cumulative enrolment by site",
+       subtitle = glue::glue("{n_enrolled} participants enrolled between {format(min(recruit$enrol_date), '%B %Y')} and {format(max(recruit$enrol_date), '%B %Y')}"),
+       x = NULL, y = "Participants enrolled") +
+  theme_report()
+```
+
+## Follow-up and form completion
+
+```{r completeness}
+completion <- tibble(
+  Event = c("Enrolment", "Third trimester survey", "Birth outcome"),
+  status = list(participants$enrolment_complete,
+                participants$third_trimester_survey_complete,
+                participants$birth_outcome_complete)
+) |>
+  mutate(
+    Records    = map_int(status, \(x) sum(!is.na(x))),
+    `Share of enrolled` = Records / n_enrolled,
+    Complete   = map_int(status, \(x) sum(x == "Complete", na.rm = TRUE)),
+    Unverified = map_int(status, \(x) sum(x == "Unverified", na.rm = TRUE)),
+    Incomplete = map_int(status, \(x) sum(x == "Incomplete", na.rm = TRUE))
+  ) |>
+  select(-status)
+
+completion |>
+  gt() |>
+  fmt_percent(`Share of enrolled`, decimals = 0) |>
+  tab_spanner(label = "Form status", columns = c(Complete, Unverified, Incomplete)) |>
+  tab_source_note("Form status is set by data entry staff in REDCap. Incomplete forms usually have a required field left blank.") |>
+  opt_row_striping()
+```
+
+## Data quality
+
+```{r qc-intro}
+#| results: asis
+if (!is.null(scorecard)) {
+  cat(glue::glue(
+    "The quality checks flagged **{n_issues} issues** in **{n_records_with_issues} records**. ",
+    "This synthetic dataset has {nrow(scorecard)} problems planted on purpose, and the checks caught ",
+    "**{sum(scorecard$caught)} of {nrow(scorecard)}**. The extra flags are knock-on effects: one wrong date can trip more than one check."
+  ))
+}
+```
+
+```{r qc-summary}
+qc_issues |>
+  count(check, name = "Issues") |>
+  right_join(tibble(check = c("Out of range", "Missing required field",
+                              "Branching logic violation", "Date order",
+                              "Implausible gestational age", "Possible duplicate")),
+             by = "check") |>
+  mutate(Issues = coalesce(Issues, 0L),
+         `What it means` = case_when(
+           check == "Out of range" ~ "Value outside the limits set in the data dictionary",
+           check == "Missing required field" ~ "A required question was left blank",
+           check == "Branching logic violation" ~ "A value sits in a question that should be hidden",
+           check == "Date order" ~ "Dates across events are in an impossible order",
+           check == "Implausible gestational age" ~ "Gestational age at birth outside 22 to 44 weeks",
+           check == "Possible duplicate" ~ "Same person may be enrolled twice"
+         )) |>
+  rename(Check = check) |>
+  gt() |>
+  cols_align("right", Issues) |>
+  opt_row_striping()
+```
+
+### Issues to resolve
+
+The full list, ready to send to the study coordinator. It is also saved as `outputs/qc_issues.csv`.
+
+```{r qc-detail}
+qc_issues |>
+  transmute(
+    Record = record_id,
+    Event  = recode(event,
+                    enrolment_arm_1 = "Enrolment",
+                    third_trimester_arm_1 = "Third trimester",
+                    birth_arm_1 = "Birth"),
+    Question = coalesce(field_label, field),
+    Value  = coalesce(value, "(blank)"),
+    Check  = check,
+    Detail = detail
+  ) |>
+  gt() |>
+  opt_interactive(use_search = TRUE, use_pagination = TRUE,
+                  page_size_default = 10, use_compact_mode = TRUE)
+```
+
+## Participants at enrolment
+
+Values are shown as entered. Records with open data issues are included, so a few figures may change once those are resolved.
+
+```{r baseline}
+baseline <- participants |>
+  filter(!is.na(site)) |>
+  group_by(Site = as.character(site)) |>
+  summarise(
+    Participants = n(),
+    `Age, mean (SD)` = sprintf("%.1f (%.1f)", mean(age, na.rm = TRUE), sd(age, na.rm = TRUE)),
+    `BMI, median` = sprintf("%.1f", median(bmi, na.rm = TRUE)),
+    `First pregnancy` = mean(parity == 0, na.rm = TRUE),
+    `Currently smokes` = mean(smoking == "Currently smokes", na.rm = TRUE),
+    `Bachelor's degree or higher` = mean(education %in% c("Bachelor's degree", "Graduate degree"), na.rm = TRUE)
+  )
+
+baseline |>
+  gt(rowname_col = "Site") |>
+  fmt_percent(c(`First pregnancy`, `Currently smokes`, `Bachelor's degree or higher`), decimals = 0) |>
+  opt_row_striping()
+```
+
+## Birth outcomes
+
+Records flagged with an implausible gestational age or an out-of-range birth weight are left out of these figures until they are corrected.
+
+```{r outcomes-data}
+flagged_ga <- qc_issues |> filter(check %in% c("Implausible gestational age")) |> pull(record_id)
+flagged_bw <- qc_issues |> filter(field == "birth_weight_g", check == "Out of range") |> pull(record_id)
+
+births <- participants |>
+  filter(has_birth, !is.na(ga_birth_weeks),
+         !record_id %in% flagged_ga)
+n_preterm <- sum(births$ga_birth_weeks < 37)
+```
+
+```{r ga-plot}
+ggplot(births, aes(ga_birth_weeks)) +
+  geom_histogram(binwidth = 1, boundary = 0, fill = accent, colour = "white", linewidth = 0.6) +
+  geom_vline(xintercept = 37, linetype = "dashed", colour = ink_soft) +
+  annotate("text", x = 36.8, y = Inf, label = "37 weeks", hjust = 1, vjust = 1.5,
+           size = 3.6, colour = ink_soft) +
+  scale_x_continuous(breaks = seq(26, 44, 2)) +
+  labs(title = "Gestational age at birth",
+       subtitle = glue::glue("{n_preterm} of {nrow(births)} births ({percent(n_preterm / nrow(births), 0.1)}) were preterm"),
+       x = "Completed weeks of gestation", y = "Births") +
+  theme_report()
+```
+
+```{r bw-plot}
+births_bw <- births |> filter(!is.na(birth_weight_g), !record_id %in% flagged_bw)
+
+ggplot(births_bw, aes(ga_birth_weeks, birth_weight_g)) +
+  geom_point(colour = accent, alpha = 0.55, size = 2) +
+  geom_smooth(method = "loess", se = TRUE, colour = ink, fill = grid_col, linewidth = 0.8) +
+  scale_y_continuous(labels = label_comma(), breaks = seq(500, 5000, 500)) +
+  scale_x_continuous(breaks = seq(26, 44, 2)) +
+  labs(title = "Birth weight rises with gestational age",
+       subtitle = "Each point is one birth; the line is a smoothed average",
+       x = "Gestational age at birth (weeks)", y = "Birth weight (g)") +
+  theme_report()
+```
+
+```{r delivery-plot}
+#| fig-height: 3.2
+delivery <- participants |>
+  filter(has_birth, !is.na(delivery_mode), !is.na(gdm)) |>
+  mutate(caesarean = delivery_mode %in% c("Planned caesarean", "Unplanned caesarean"),
+         group = if_else(gdm == "Yes", "Gestational diabetes", "No gestational diabetes")) |>
+  group_by(group) |>
+  summarise(n = n(), rate = mean(caesarean))
+
+ggplot(delivery, aes(rate, fct_reorder(group, rate))) +
+  geom_col(fill = accent, width = 0.55) +
+  geom_text(aes(label = glue::glue("{percent(rate, 1)} of {n}")), hjust = -0.1,
+            size = 3.8, colour = ink) +
+  scale_x_continuous(labels = label_percent(), limits = c(0, max(delivery$rate) * 1.35),
+                     expand = expansion(mult = c(0, 0.02))) +
+  labs(title = "Caesarean births by gestational diabetes status",
+       x = "Share of births by caesarean", y = NULL) +
+  theme_report() +
+  theme(panel.grid.major.y = element_blank())
+```
+
+---
+
+*Generated on `r format(Sys.Date(), "%B %d, %Y")` from `r n_enrolled` records. Synthetic data; not for clinical or research use.*
