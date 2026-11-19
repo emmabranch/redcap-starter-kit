@@ -1,0 +1,21 @@
+record_id,event,field,field_label,value,check,detail
+1006,enrolment_arm_1,cigs_per_day,Cigarettes per day on average,5,Branching logic violation,Has a value but should be hidden (shown only if [smoking] = '2')
+1018,birth_arm_1,birth_weight_g,Birth weight (grams),,Missing required field,Required field is blank
+1020,birth_arm_1,nicu_days,Days in NICU,3,Branching logic violation,Has a value but should be hidden (shown only if [nicu] = '1')
+1028,birth_arm_1,birth_weight_g,Birth weight (grams),,Missing required field,Required field is blank
+1033,third_trimester_arm_1,tt_date,Today's date,2025-11-30 then 2025-11-16,Date order,birth_date is before tt_date
+1088,birth_arm_1,birth_weight_g,Birth weight (grams),34500,Out of range,Allowed range 300 to 6000
+1093,enrolment_arm_1,parity,Number of previous births at 20 weeks or more,,Missing required field,Required field is blank
+1147,enrolment_arm_1,parity,Number of previous births at 20 weeks or more,,Missing required field,Required field is blank
+1162,third_trimester_arm_1,gdm,Have you been diagnosed with gestational diabetes in this pregnancy?,,Missing required field,Required field is blank
+1163,birth_arm_1,ga_birth_weeks,Gestational age at birth (weeks),46,Implausible gestational age,Gestational age at birth outside 22 to 44 weeks; check the LMP and birth dates
+1173,birth_arm_1,birth_date,Date of birth,2025-05-26 then 2025-05-16,Date order,birth_date is before enrol_date
+1173,birth_arm_1,ga_birth_weeks,Gestational age at birth (weeks),16.8,Implausible gestational age,Gestational age at birth outside 22 to 44 weeks; check the LMP and birth dates
+1173,third_trimester_arm_1,tt_date,Today's date,2025-08-03 then 2025-05-16,Date order,birth_date is before tt_date
+1185,enrolment_arm_1,age,Age at enrolment (years),52,Out of range,Allowed range 15 to 50
+1237,birth_arm_1,ga_birth_weeks,Gestational age at birth (weeks),46,Implausible gestational age,Gestational age at birth outside 22 to 44 weeks; check the LMP and birth dates
+1256,enrolment_arm_1,cigs_per_day,Cigarettes per day on average,5,Branching logic violation,Has a value but should be hidden (shown only if [smoking] = '2')
+1262,third_trimester_arm_1,bp_sys,Most recent systolic blood pressure (mmHg),260,Out of range,Allowed range 70 to 200
+1268,enrolment_arm_1,height_cm,Height (cm),16.4,Out of range,Allowed range 130 to 200
+1290,enrolment_arm_1,parity,Number of previous births at 20 weeks or more,,Missing required field,Required field is blank
+1301,enrolment_arm_1,record_id,Record ID,1301,Possible duplicate,"Same age, LMP date, height, and weight as record 1218"

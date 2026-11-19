@@ -108,6 +108,13 @@ birth <- enrol |>
   ) |>
   select(-preterm_draw, -ga_days, -p_caesarean, -gdm, -smoking, -lmp_date)
 
+# A survey can only happen before the birth: participants who gave birth
+# before their third trimester survey date never got the survey.
+tt <- tt |>
+  left_join(select(birth, record_id, birth_date), by = "record_id") |>
+  filter(is.na(birth_date) | tt_date < birth_date) |>
+  select(-birth_date)
+
 # --- Seed deliberate data problems -------------------------------------------
 # Each problem is something REDCap would allow to be saved (range checks and
 # required fields only warn), or that can happen when branching logic changes.
