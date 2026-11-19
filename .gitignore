@@ -1,0 +1,16 @@
+# RStudio and R session files
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# Secrets: REDCap API tokens live here, never commit them
+.Renviron
+
+# Quarto build files
+report/*_files/
+report/.quarto/
+/.quarto/
+
+# macOS
+.DS_Store
