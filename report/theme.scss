@@ -1,0 +1,20 @@
+/*-- scss:defaults --*/
+/* REDCap starter kit: project colours only. Everything else comes from the
+   shared brand kit (_brand.yml and brand.scss). */
+
+/*-- scss:rules --*/
+
+/* ---------- Project colours: Plum ---------- */
+:root {
+  --eb-accent: #6b4c9a;
+  --eb-accent-2: #a07cc5;
+  --eb-accent-light: #c9b2ea;
+  --eb-hero-glow: rgba(160, 124, 197, 0.32);
+}
+
+/* Thin dark gaps so the weekly enrolment stripes read as stripes */
+.eb-report-hero .hero-bg rect {
+  stroke: rgba(8, 26, 40, 0.9);
+  stroke-width: 3px;
+  vector-effect: non-scaling-stroke;
+}

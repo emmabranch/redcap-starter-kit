@@ -7,8 +7,8 @@ date-format: "MMMM D, YYYY"
 author: "Emma Branch"
 format:
   html:
-    theme: [cosmo, brand, brand.scss]
-    include-before-body: topbar.html
+    theme: [cosmo, brand, brand.scss, theme.scss]
+    include-before-body: [topbar.html, report-hero.html]
     include-after-body: footer.html
     toc: true
     toc-location: left
@@ -68,6 +68,22 @@ n_tt       <- sum(participants$has_third_trimester)
 n_birth    <- sum(participants$has_birth)
 n_issues   <- nrow(qc_issues)
 n_records_with_issues <- n_distinct(qc_issues$record_id)
+```
+
+```{r}
+#| label: hero-stripes
+#| output: asis
+# Hero background: one stripe per week of enrolment, brighter in busier weeks.
+# The shared footer.html moves this into the hero at the top of the page.
+enrol_weeks <- as.Date(cut(participants$enrol_date[!is.na(participants$enrol_date)], "week"))
+all_weeks   <- seq(min(enrol_weeks), max(enrol_weeks), by = "week")
+week_n      <- as.integer(table(factor(as.character(enrol_weeks), levels = as.character(all_weeks))))
+stripe_col  <- scales::col_numeric(c("#2a1f3d", "#6b4c9a", "#c9b2ea"), domain = c(0, max(week_n)))(week_n)
+w <- 1000 / length(week_n)
+rects <- sprintf('<rect x="%.2f" y="0" width="%.2f" height="26" fill="%s"></rect>',
+                 (seq_along(week_n) - 1) * w, w + 0.6, stripe_col)
+cat('<div class="eb-hero-stripes" aria-hidden="true"><svg viewBox="0 0 1000 26" preserveAspectRatio="none">',
+    paste(rects, collapse = ""), '</svg></div>', sep = "")
 ```
 
 ::: {.callout-note}

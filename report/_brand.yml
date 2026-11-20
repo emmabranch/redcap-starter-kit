@@ -33,6 +33,6 @@ typography:
   headings:
     family: Fraunces
     weight: 700
-    color: ocean
+    color: navy
   link:
     color: blue
