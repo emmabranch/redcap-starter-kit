@@ -4,10 +4,12 @@ subtitle: "Data status and quality report"
 description: "A fictional pregnancy cohort. All data are simulated."
 date: today
 date-format: "MMMM D, YYYY"
-author: "Emma Branch, Source to Sea Data"
+author: "Emma Branch"
 format:
   html:
-    theme: flatly
+    theme: [cosmo, brand, brand.scss]
+    include-before-body: topbar.html
+    include-after-body: footer.html
     toc: true
     toc-location: left
     embed-resources: true

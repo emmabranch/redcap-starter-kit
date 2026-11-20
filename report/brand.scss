@@ -1,0 +1,97 @@
+/* =====================================================================
+   brand.scss: shared styling for Emma Branch's portfolio sites
+   Colours and fonts live in _brand.yml. This file adds the finishing
+   touches: navbar, headings, content card, top bar, and footer.
+   Master copy: /Users/ecox/projects/_brand-kit/brand.scss
+   ===================================================================== */
+
+/*-- scss:defaults --*/
+$navbar-bg: #0b2233;
+$navbar-fg: #c9d6e0;
+$navbar-hl: #ffffff;
+$border-radius: 10px;
+
+/*-- scss:rules --*/
+
+/* ---------- Navbar (website projects and dashboards) ---------- */
+.navbar { box-shadow: 0 2px 14px rgba(0, 0, 0, 0.18); }
+.navbar-title { font-family: "Fraunces", Georgia, serif; font-weight: 800; letter-spacing: -0.01em; }
+.navbar .nav-link { font-weight: 500; }
+.navbar .nav-link.active { box-shadow: inset 0 -3px 0 #2bb3a0; }
+
+/* ---------- Headings ---------- */
+#title-block-header .title { font-weight: 800; letter-spacing: -0.015em; }
+#title-block-header .subtitle { font-family: "Inter", sans-serif; font-weight: 500; color: #5b7083; }
+main h2 {
+  border-bottom: none;
+  padding-bottom: 0.55rem;
+  margin-top: 2.2rem;
+  /* short teal-blue underline, the same as the housing dashboard */
+  background: linear-gradient(90deg, #2471a3, #2bb3a0) no-repeat left bottom / 44px 4px;
+}
+
+/* ---------- Content on a soft white card ---------- */
+main.content {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 6px 18px rgba(16, 24, 40, 0.06);
+  padding: 2rem 2.5rem 2.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+}
+@media (max-width: 700px) {
+  main.content { padding: 1.25rem 1rem 1.5rem; margin-top: 0.75rem; border-radius: 10px; }
+}
+
+/* Quarto leaves an empty 60px row under the content; the footer replaces it */
+#quarto-content.page-rows-contents { grid-template-rows: [content-top] auto [content-bottom] 0 [page-bottom]; }
+
+/* Tables and code read a little smaller than body text */
+main table { font-size: 0.9rem; }
+
+/* ---------- Top bar for single-page reports (topbar.html) ---------- */
+.eb-topbar {
+  background: #0b2233;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.18);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1.4rem;
+  padding: 0.7rem 1.4rem;
+}
+.eb-topbar a { color: #c9d6e0; text-decoration: none; font-weight: 500; font-size: 0.92rem; }
+.eb-topbar a:hover, .eb-topbar a:focus { color: #ffffff; }
+.eb-topbar .eb-topbar-title { font-family: "Fraunces", Georgia, serif; font-weight: 800;
+                              font-size: 1.1rem; color: #ffffff; letter-spacing: -0.01em; }
+.eb-topbar .eb-topbar-links { display: flex; flex-wrap: wrap; gap: 0.3rem 1.2rem; margin-left: auto; }
+@media (max-width: 700px) {
+  .eb-topbar { padding: 0.6rem 1rem; }
+  .eb-topbar .eb-topbar-links { margin-left: 0; }
+}
+
+/* ---------- Footer (footer.html) ---------- */
+.eb-footer {
+  background: #0b2233; color: #c9d6e0;
+  margin-top: 1.5rem; padding: 2rem 1.4rem 2.2rem;
+  font-size: 0.88rem; line-height: 1.6;
+}
+.eb-footer-inner { max-width: 1100px; margin: 0 auto; }
+.eb-footer a { color: #9fe3d8; text-decoration: none; }
+.eb-footer a:hover, .eb-footer a:focus { color: #ffffff; text-decoration: underline; }
+.eb-footer-name { font-family: "Fraunces", Georgia, serif; font-weight: 800; font-size: 1.15rem; color: #ffffff; }
+.eb-footer-tag { margin-bottom: 1rem; }
+.eb-footer-heading { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+                     color: #9fe3d8; margin-bottom: 0.35rem; }
+.eb-footer-projects { display: flex; flex-wrap: wrap; gap: 0.2rem 1.3rem; margin-bottom: 1.1rem; }
+.eb-footer-contact { display: flex; flex-wrap: wrap; gap: 0.2rem 1.3rem;
+                     border-top: 1px solid rgba(255, 255, 255, 0.14); padding-top: 0.9rem; }
+
+/* Footer on phones: smaller text, project links in a tidy two-column grid */
+@media (max-width: 700px) {
+  main.content { margin-bottom: 0.5rem; }
+  .eb-footer { margin-top: 1rem; padding: 1.4rem 1.1rem 1.6rem; font-size: 0.8rem; line-height: 1.4; }
+  .eb-footer-name { font-size: 1.05rem; }
+  .eb-footer-tag { margin-bottom: 0.9rem; }
+  .eb-footer-projects { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem 1rem; }
+  .eb-footer-contact { gap: 0.4rem 1.1rem; }
+}
+
+/* Hide the top bar and footer when printing */
+@media print { .eb-topbar, .eb-footer { display: none; } main.content { box-shadow: none; padding: 0; } }
