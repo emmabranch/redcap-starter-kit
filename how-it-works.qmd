@@ -1,0 +1,80 @@
+---
+title: "How it works"
+subtitle: "The pipeline, the quality checks, and how to use it with a real REDCap project."
+---
+
+## The quality checks
+
+| Check | What it finds | Driven by |
+|---|---|---|
+| Out of range | Values outside the allowed minimum and maximum | Data dictionary |
+| Missing required field | Required questions left blank, only where they should have been shown | Data dictionary and branching logic |
+| Branching logic violation | Values in questions that should be hidden | Data dictionary |
+| Date order | Dates across events in an impossible order | Study rules |
+| Implausible gestational age | Gestational age at birth outside 22 to 44 weeks | Study rules |
+| Possible duplicate | The same person enrolled under two record IDs | Study rules |
+
+REDCap's range checks and required fields only warn at data entry, and values stay behind when branching logic changes, so these problems are common in real projects. The simulated data has 18 problems planted on purpose, and the checks catch all 18.
+
+## Repository structure
+
+```
+redcap-starter-kit/
+├── data-dictionary/        REDCap data dictionary, events, and instrument mapping
+├── data/
+│   ├── raw/                Synthetic REDCap export and the list of planted issues
+│   └── processed/          Cleaned, typed, and labelled data
+├── R/
+│   ├── 00_functions.R      Shared helpers (dictionary parsing, branching logic, data access)
+│   ├── 01_simulate_data.R  Simulates the fictional cohort
+│   ├── 02_pull_and_clean.R Pulls and cleans the data
+│   └── 03_quality_checks.R Runs the quality checks
+├── report/                 Quarto sample report (renders on its own to report/index.html)
+├── outputs/                Issue list and summaries (CSV)
+├── images/                 Motif, browser tab icon, and report preview
+├── docs/                   Published website for GitHub Pages
+├── index.qmd, how-it-works.qmd, about.qmd   Website pages
+└── run_all.R               Runs everything in order
+```
+
+## How to reproduce
+
+You need R (4.3 or later), [Quarto](https://quarto.org/), and these packages:
+
+```r
+install.packages(c("tidyverse", "REDCapR", "here", "gt", "glue", "scales",
+                   "quarto", "reactable"))
+```
+
+Then open `redcap-starter-kit.Rproj` in RStudio and run:
+
+```r
+source("run_all.R")
+```
+
+The report is saved to `report/index.html`, and the site, with the report inside it, to `docs/`.
+
+## Using it with a real REDCap project
+
+1. Ask your REDCap administrator for API access to the project, and generate a token.
+2. Create a file called `.Renviron` in the project folder (it is already excluded from Git) containing:
+
+   ```
+   REDCAP_URI=https://your-institution.ca/redcap/api/
+   REDCAP_TOKEN=your-token-here
+   ```
+
+3. Restart R and run `source("run_all.R")`. The simulation step is skipped and the data are pulled live.
+
+The cleaning and the first three quality checks work on any project. The date rules, gestational age check, duplicate check, and report sections are specific to this study and are the parts to adapt.
+
+::: {.warning-note}
+Never commit an API token, and never publish a report built from real participant data.
+:::
+
+## Limitations
+
+- Tested on simulated data only. The 18 planted problems were written alongside the checks, so catching all 18 shows the checks work as designed, not how many problems a real project will have.
+- The branching logic translator handles simple logic (`=`, `<>`, `and`, `or`, and fields in a single event). More complex REDCap logic, such as functions or cross-event references, would need extending it.
+- Checkbox fields, repeating instruments, and projects with more than one arm have not been tested.
+- The date rules, gestational age check, duplicate check, and report sections are specific to this study.

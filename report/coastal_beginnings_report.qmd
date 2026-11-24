@@ -5,10 +5,13 @@ description: "A fictional pregnancy cohort. All data are simulated."
 date: today
 date-format: "MMMM D, YYYY"
 author: "Emma Branch"
+output-file: index.html
 format:
   html:
     theme: [cosmo, brand, brand.scss, theme.scss]
-    include-before-body: [topbar.html, report-hero.html]
+    include-before-body: topbar.html
+    include-in-header:
+      text: '<link rel="icon" type="image/png" href="images/favicon.png">'
     include-after-body: footer.html
     toc: true
     toc-location: left
@@ -27,6 +30,9 @@ execute:
 ```{r setup}
 library(tidyverse)
 library(here)
+# The report folder is its own small Quarto project, so tell here() where the
+# real project root is (one level up), otherwise it would stop at report/
+here::i_am("report/coastal_beginnings_report.qmd")
 library(gt)
 library(scales)
 
@@ -70,22 +76,6 @@ n_issues   <- nrow(qc_issues)
 n_records_with_issues <- n_distinct(qc_issues$record_id)
 ```
 
-```{r}
-#| label: hero-stripes
-#| output: asis
-# Hero background: one stripe per week of enrolment, brighter in busier weeks.
-# The shared footer.html moves this into the hero at the top of the page.
-enrol_weeks <- as.Date(cut(participants$enrol_date[!is.na(participants$enrol_date)], "week"))
-all_weeks   <- seq(min(enrol_weeks), max(enrol_weeks), by = "week")
-week_n      <- as.integer(table(factor(as.character(enrol_weeks), levels = as.character(all_weeks))))
-stripe_col  <- scales::col_numeric(c("#2a1f3d", "#6b4c9a", "#c9b2ea"), domain = c(0, max(week_n)))(week_n)
-w <- 1000 / length(week_n)
-rects <- sprintf('<rect x="%.2f" y="0" width="%.2f" height="26" fill="%s"></rect>',
-                 (seq_along(week_n) - 1) * w, w + 0.6, stripe_col)
-cat('<div class="eb-hero-stripes" aria-hidden="true"><svg viewBox="0 0 1000 26" preserveAspectRatio="none">',
-    paste(rects, collapse = ""), '</svg></div>', sep = "")
-```
-
 ::: {.callout-note}
 This report is generated automatically from a REDCap project by the [REDCap starter kit](https://github.com/emmabranch/redcap-starter-kit). The study and every record in it are fictional, simulated for demonstration.
 :::
@@ -105,12 +95,6 @@ cat('<div class="tiles">',
     '</div>', sep = "\n")
 ```
 
-```{css}
-.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 1rem 0 1.5rem; }
-.tile { border: 1px solid #e6e5e1; border-radius: 8px; padding: 14px 16px; background: #fcfcfb; }
-.tile-value { font-size: 2rem; font-weight: 700; line-height: 1.1; color: #0b0b0b; }
-.tile-label { font-size: 0.9rem; color: #52514e; margin-top: 4px; }
-```
 
 ## Recruitment
 

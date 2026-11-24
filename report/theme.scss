@@ -1,6 +1,6 @@
 /*-- scss:defaults --*/
-/* REDCap starter kit: project colours only. Everything else comes from the
-   shared brand kit (_brand.yml and brand.scss). */
+/* REDCap starter kit sample report: project colours and the top bar.
+   Everything else comes from the shared brand kit (_brand.yml and brand.scss). */
 
 /*-- scss:rules --*/
 
@@ -9,12 +9,23 @@
   --eb-accent: #6b4c9a;
   --eb-accent-2: #a07cc5;
   --eb-accent-light: #c9b2ea;
-  --eb-hero-glow: rgba(160, 124, 197, 0.32);
 }
 
-/* Thin dark gaps so the weekly enrolment stripes read as stripes */
-.eb-report-hero .hero-bg rect {
-  stroke: rgba(8, 26, 40, 0.9);
-  stroke-width: 3px;
-  vector-effect: non-scaling-stroke;
+/* ---------- Top bar: laid out like the website's navbar ----------
+   Motif and title on the left, page links straight after, GitHub on the right */
+.eb-topbar { padding: 0.7rem 1.5rem; gap: 0.4rem 1.75rem; min-height: 66px; }
+.eb-topbar .eb-topbar-title { display: inline-flex; align-items: center; gap: 0.55rem; font-size: 1.25rem; }
+.eb-topbar .eb-topbar-title img { height: 38px; width: auto; }
+.eb-topbar .eb-topbar-links { margin-left: 0; gap: 0.3rem 1.4rem; }
+.eb-topbar .eb-topbar-links a { font-size: 1rem; padding: 0.35rem 0; }
+.eb-topbar .eb-topbar-links a[aria-current="page"] { box-shadow: inset 0 -5px 0 var(--eb-accent); }
+.eb-topbar .eb-topbar-github { margin-left: auto; font-size: 0.95rem; }
+@media (max-width: 700px) {
+  .eb-topbar .eb-topbar-github { margin-left: 0; }
 }
+
+/* ---------- "At a glance" tiles ---------- */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin: 1rem 0 1.5rem; }
+.tile { border: 2px solid #111111; border-top: 8px solid var(--eb-accent); padding: 14px 16px; background: #ffffff; box-shadow: 4px 4px 0 #111111; }
+.tile-value { font-size: 2rem; font-weight: 800; line-height: 1.1; color: #111111; letter-spacing: -0.03em; }
+.tile-label { font-size: 0.9rem; color: #3a352d; margin-top: 4px; }

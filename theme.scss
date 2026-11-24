@@ -1,0 +1,70 @@
+/*-- scss:defaults --*/
+/* REDCap starter kit: project colours and a few site-only touches. Everything
+   else comes from the shared brand kit (_brand.yml and brand.scss). */
+
+/*-- scss:rules --*/
+
+/* ---------- Project colours: Plum ---------- */
+:root {
+  --eb-accent: #6b4c9a;
+  --eb-accent-2: #a07cc5;
+  --eb-accent-light: #c9b2ea;
+  --eb-hero-glow: rgba(160, 124, 197, 0.28);
+  --eb-hero-shade: 20, 14, 30;
+}
+
+/* Thin dark gaps so the weekly enrolment stripes read as stripes */
+.hero-full .hero-bg rect {
+  stroke: rgba(20, 14, 30, 0.9);
+  stroke-width: 3px;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Pages without a hero: a little more space under the navbar */
+main.content:not(:has(.hero-full)) #title-block-header { margin-top: 1.5rem; }
+body:has(.hero-full) #title-block-header { display: none; }
+
+/* ---------- Stat boxes: plum shades ---------- */
+.stat-box:nth-child(1) { border-top-color: #6b4c9a; }
+.stat-box:nth-child(2) { border-top-color: #a07cc5; }
+.stat-box:nth-child(3) { border-top-color: #3f2a5e; }
+.stat-box:nth-child(4) { border-top-color: #c9b2ea; }
+.stat-box .num { white-space: nowrap; }  /* keeps "18 of 18" on one line */
+
+/* ---------- Notes ---------- */
+.project-note {
+  font-size: 0.98rem;
+  color: #111111;
+  background: #B9A4FF;
+  border: 2px solid #111111;
+  padding: 0.8rem 1rem;
+  margin: 0.4rem 0 1.5rem;
+}
+.warning-note {
+  color: #111111;
+  background: #ffffff;
+  border: 2px solid #111111;
+  border-left: 8px solid #FF5A36;
+  padding: 0.8rem 1rem;
+  margin: 1.25rem 0;
+  font-weight: 700;
+}
+
+/* ---------- Report preview card on the home page ---------- */
+.report-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 1.5rem;
+  align-items: center;
+  background: #ffffff;
+  border: 3px solid #111111;
+  box-shadow: 6px 6px 0 #111111;
+  padding: 1.25rem;
+  margin: 1.5rem 0 2rem;
+}
+.report-card img { width: 100%; height: auto; border: 2px solid #111111; }
+.report-card h3 { margin-top: 0; }
+
+/* ---------- Tables ---------- */
+.table { background: #ffffff; border: 2px solid #111111; font-size: 0.95rem; }
+.table thead th { background: #F3EEE3; }

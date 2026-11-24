@@ -1,0 +1,5 @@
+# The sample report is its own small Quarto project, so it renders as a single
+# self-contained file (report/index.html) rather than as a page of the website
+# in the folder above. run_all.R renders it, then the website copies it in.
+project:
+  type: default

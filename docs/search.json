@@ -1,0 +1,93 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About the data",
+    "section": "",
+    "text": "It is demonstrated on the Coastal Beginnings Study, a fictional pregnancy cohort. All data are simulated. No real people are represented."
+  },
+  {
+    "objectID": "about.html#data-and-licences",
+    "href": "about.html#data-and-licences",
+    "title": "About the data",
+    "section": "Data and licences",
+    "text": "Data and licences\n\nData: every record in data/ is simulated by R/01_simulate_data.R for the fictional Coastal Beginnings Study. data/raw/seeded_issues.csv lists the 18 problems planted on purpose.\nCode: MIT licence (see LICENSE)."
+  },
+  {
+    "objectID": "about.html#about-me",
+    "href": "about.html#about-me",
+    "title": "About the data",
+    "section": "About me",
+    "text": "About me\nI’m Emma Branch, an epidemiologist and data analyst in British Columbia, and a PhD candidate in Population and Public Health at the University of British Columbia. I’ve spent about 10 years working with health research data, including registry analytics, REDCap database design, data governance, and performance measurement. I mostly work in R, SAS, and SQL, and build reports and tools with Quarto, Shiny, leaflet, and Power BI. Lately I’ve been applying the same habits to environmental and ocean data, mostly because I like maps and fish.\nMore projects · LinkedIn · emma.branch@gmail.com"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "REDCap starter kit. From REDCap project to quality-checked report.",
+    "section": "",
+    "text": "Portfolio project · R · REDCap · Quarto\n\n\nThis kit pulls records from REDCap with REDCapR, uses the project’s own data dictionary to drive cleaning and labelling, runs six data quality checks, and renders a status report. It is demonstrated on a fictional pregnancy cohort with synthetic data.\nRead the sample report How it works Code on GitHub\nBackground: one stripe per week of enrolment in the sample study, brighter in busier weeks."
+  },
+  {
+    "objectID": "index.html#what-it-does",
+    "href": "index.html#what-it-does",
+    "title": "REDCap starter kit. From REDCap project to quality-checked report.",
+    "section": "What it does",
+    "text": "What it does\n\nDefines a realistic REDCap project. A longitudinal data dictionary with three events, required fields, range validation, branching logic, calculated fields (BMI, gestational age, a preterm flag), cross-event references, and identifier flags on dates.\nPulls the data live from the REDCap API with REDCapR, or from a local REDCap-format export when no credentials are set.\nCleans it using the data dictionary. Field types and labels come from the dictionary, not hard-coded rules, so the same code adapts to other projects.\nRuns six quality checks and writes a list of issues a study coordinator can work through.\nRenders a Quarto report with recruitment, follow-up, data quality, baseline characteristics, and outcome graphics."
+  },
+  {
+    "objectID": "index.html#the-sample-report",
+    "href": "index.html#the-sample-report",
+    "title": "REDCap starter kit. From REDCap project to quality-checked report.",
+    "section": "The sample report",
+    "text": "The sample report\n\n\n\nCoastal Beginnings Study\nA data status and quality report, generated automatically from the REDCap project. It is a single self-contained file, so a study coordinator can email it or open it offline.\nRead the sample report"
+  },
+  {
+    "objectID": "index.html#whats-here",
+    "href": "index.html#whats-here",
+    "title": "REDCap starter kit. From REDCap project to quality-checked report.",
+    "section": "What’s here",
+    "text": "What’s here\n\nHow it works: the pipeline, the six quality checks, and how to use it with a real REDCap project.\nSample report: the report the kit produces for the fictional Coastal Beginnings Study.\nAbout the data: where the data come from, the licences, and who made this."
+  },
+  {
+    "objectID": "how-it-works.html",
+    "href": "how-it-works.html",
+    "title": "How it works",
+    "section": "",
+    "text": "Check\nWhat it finds\nDriven by\n\n\n\n\nOut of range\nValues outside the allowed minimum and maximum\nData dictionary\n\n\nMissing required field\nRequired questions left blank, only where they should have been shown\nData dictionary and branching logic\n\n\nBranching logic violation\nValues in questions that should be hidden\nData dictionary\n\n\nDate order\nDates across events in an impossible order\nStudy rules\n\n\nImplausible gestational age\nGestational age at birth outside 22 to 44 weeks\nStudy rules\n\n\nPossible duplicate\nThe same person enrolled under two record IDs\nStudy rules\n\n\n\nREDCap’s range checks and required fields only warn at data entry, and values stay behind when branching logic changes, so these problems are common in real projects. The simulated data has 18 problems planted on purpose, and the checks catch all 18."
+  },
+  {
+    "objectID": "how-it-works.html#the-quality-checks",
+    "href": "how-it-works.html#the-quality-checks",
+    "title": "How it works",
+    "section": "",
+    "text": "Check\nWhat it finds\nDriven by\n\n\n\n\nOut of range\nValues outside the allowed minimum and maximum\nData dictionary\n\n\nMissing required field\nRequired questions left blank, only where they should have been shown\nData dictionary and branching logic\n\n\nBranching logic violation\nValues in questions that should be hidden\nData dictionary\n\n\nDate order\nDates across events in an impossible order\nStudy rules\n\n\nImplausible gestational age\nGestational age at birth outside 22 to 44 weeks\nStudy rules\n\n\nPossible duplicate\nThe same person enrolled under two record IDs\nStudy rules\n\n\n\nREDCap’s range checks and required fields only warn at data entry, and values stay behind when branching logic changes, so these problems are common in real projects. The simulated data has 18 problems planted on purpose, and the checks catch all 18."
+  },
+  {
+    "objectID": "how-it-works.html#repository-structure",
+    "href": "how-it-works.html#repository-structure",
+    "title": "How it works",
+    "section": "Repository structure",
+    "text": "Repository structure\nredcap-starter-kit/\n├── data-dictionary/        REDCap data dictionary, events, and instrument mapping\n├── data/\n│   ├── raw/                Synthetic REDCap export and the list of planted issues\n│   └── processed/          Cleaned, typed, and labelled data\n├── R/\n│   ├── 00_functions.R      Shared helpers (dictionary parsing, branching logic, data access)\n│   ├── 01_simulate_data.R  Simulates the fictional cohort\n│   ├── 02_pull_and_clean.R Pulls and cleans the data\n│   └── 03_quality_checks.R Runs the quality checks\n├── report/                 Quarto sample report (renders on its own to report/index.html)\n├── outputs/                Issue list and summaries (CSV)\n├── images/                 Motif, browser tab icon, and report preview\n├── docs/                   Published website for GitHub Pages\n├── index.qmd, how-it-works.qmd, about.qmd   Website pages\n└── run_all.R               Runs everything in order"
+  },
+  {
+    "objectID": "how-it-works.html#how-to-reproduce",
+    "href": "how-it-works.html#how-to-reproduce",
+    "title": "How it works",
+    "section": "How to reproduce",
+    "text": "How to reproduce\nYou need R (4.3 or later), Quarto, and these packages:\ninstall.packages(c(\"tidyverse\", \"REDCapR\", \"here\", \"gt\", \"glue\", \"scales\",\n                   \"quarto\", \"reactable\"))\nThen open redcap-starter-kit.Rproj in RStudio and run:\nsource(\"run_all.R\")\nThe report is saved to report/index.html, and the site, with the report inside it, to docs/."
+  },
+  {
+    "objectID": "how-it-works.html#using-it-with-a-real-redcap-project",
+    "href": "how-it-works.html#using-it-with-a-real-redcap-project",
+    "title": "How it works",
+    "section": "Using it with a real REDCap project",
+    "text": "Using it with a real REDCap project\n\nAsk your REDCap administrator for API access to the project, and generate a token.\nCreate a file called .Renviron in the project folder (it is already excluded from Git) containing:\nREDCAP_URI=https://your-institution.ca/redcap/api/\nREDCAP_TOKEN=your-token-here\nRestart R and run source(\"run_all.R\"). The simulation step is skipped and the data are pulled live.\n\nThe cleaning and the first three quality checks work on any project. The date rules, gestational age check, duplicate check, and report sections are specific to this study and are the parts to adapt.\n\nNever commit an API token, and never publish a report built from real participant data."
+  },
+  {
+    "objectID": "how-it-works.html#limitations",
+    "href": "how-it-works.html#limitations",
+    "title": "How it works",
+    "section": "Limitations",
+    "text": "Limitations\n\nTested on simulated data only. The 18 planted problems were written alongside the checks, so catching all 18 shows the checks work as designed, not how many problems a real project will have.\nThe branching logic translator handles simple logic (=, &lt;&gt;, and, or, and fields in a single event). More complex REDCap logic, such as functions or cross-event references, would need extending it.\nCheckbox fields, repeating instruments, and projects with more than one arm have not been tested.\nThe date rules, gestational age check, duplicate check, and report sections are specific to this study."
+  }
+]

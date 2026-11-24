@@ -1,0 +1,50 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+    - index.qmd
+    - how-it-works.qmd
+    - about.qmd
+  resources:
+    - .nojekyll
+    - images/motif.svg
+    - images/report-preview.png
+    # The sample report is rendered on its own (see report/_quarto.yml),
+    # then copied into the site so it lives at /report/
+    - report/index.html
+
+website:
+  title: "REDCap starter kit"
+  site-url: https://emmabranch.github.io/redcap-starter-kit/
+  repo-url: https://github.com/emmabranch/redcap-starter-kit
+  favicon: images/favicon.png
+  navbar:
+    logo: images/motif.svg
+    logo-alt: ""
+    left:
+      - href: index.qmd
+        text: Overview
+      - href: how-it-works.qmd
+        text: How it works
+      - href: report/index.html
+        text: Sample report
+      - href: about.qmd
+        text: About the data
+    right:
+      - icon: github
+        href: https://github.com/emmabranch/redcap-starter-kit
+        aria-label: Code on GitHub
+  page-footer:
+    center: "Portfolio project by Emma Branch. The Coastal Beginnings Study is fictional. All data are simulated. No real people are represented."
+
+format:
+  html:
+    theme: [cosmo, brand, brand.scss, theme.scss]
+    include-after-body: footer.html
+    toc: false
+
+execute:
+  echo: false
+  warning: false
+  message: false
+  freeze: auto

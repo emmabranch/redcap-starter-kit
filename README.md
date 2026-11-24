@@ -2,9 +2,9 @@
 
 A small, reusable pipeline for REDCap projects: pull the data, clean it using the project's own data dictionary, run quality checks, and produce a polished status report automatically.
 
-**Live report:** https://emmabranch.github.io/redcap-starter-kit/ · **More projects:** [github.com/emmabranch](https://github.com/emmabranch)
+**Live site:** https://emmabranch.github.io/redcap-starter-kit/ · **More projects:** [github.com/emmabranch](https://github.com/emmabranch)
 
-![Preview of the Coastal Beginnings report](docs/report-preview.png)
+![Preview of the Coastal Beginnings report](images/report-preview.png)
 
 > It is demonstrated on the **Coastal Beginnings Study**, a fictional pregnancy cohort. **All data are simulated. No real people are represented.**
 
@@ -47,9 +47,11 @@ redcap-starter-kit/
 │   ├── 01_simulate_data.R  Simulates the fictional cohort
 │   ├── 02_pull_and_clean.R Pulls and cleans the data
 │   └── 03_quality_checks.R Runs the quality checks
-├── report/                 Quarto report and the shared portfolio theme
+├── report/                 Quarto sample report (renders on its own to report/index.html)
 ├── outputs/                Issue list and summaries (CSV)
-├── docs/                   Published report for GitHub Pages
+├── images/                 Motif, browser tab icon, and report preview
+├── docs/                   Published website for GitHub Pages
+├── index.qmd, how-it-works.qmd, about.qmd   Website pages
 └── run_all.R               Runs everything in order
 ```
 
@@ -68,7 +70,7 @@ Then open `redcap-starter-kit.Rproj` in RStudio and run:
 source("run_all.R")
 ```
 
-The report is saved to `docs/index.html`.
+The report is saved to `report/index.html`, and the website, with the report inside it, to `docs/`.
 
 ### Using it with a real REDCap project
 

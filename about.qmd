@@ -1,0 +1,18 @@
+---
+title: "About the data"
+---
+
+::: {.project-note}
+It is demonstrated on the **Coastal Beginnings Study**, a fictional pregnancy cohort. **All data are simulated. No real people are represented.**
+:::
+
+## Data and licences
+
+- **Data:** every record in `data/` is simulated by `R/01_simulate_data.R` for the fictional Coastal Beginnings Study. `data/raw/seeded_issues.csv` lists the 18 problems planted on purpose.
+- **Code:** MIT licence (see [`LICENSE`](https://github.com/emmabranch/redcap-starter-kit/blob/main/LICENSE)).
+
+## About me
+
+I'm Emma Branch, an epidemiologist and data analyst in British Columbia, and a PhD candidate in Population and Public Health at the University of British Columbia. I've spent about 10 years working with health research data, including registry analytics, REDCap database design, data governance, and performance measurement. I mostly work in R, SAS, and SQL, and build reports and tools with Quarto, Shiny, leaflet, and Power BI. Lately I've been applying the same habits to environmental and ocean data, mostly because I like maps and fish.
+
+[More projects](https://github.com/emmabranch) · [LinkedIn](https://www.linkedin.com/in/embranch/) · emma.branch@gmail.com
