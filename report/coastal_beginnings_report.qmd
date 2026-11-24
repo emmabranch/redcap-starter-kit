@@ -8,7 +8,9 @@ author: "Emma Branch"
 output-file: index.html
 format:
   html:
-    theme: [cosmo, brand, brand.scss, theme.scss]
+    # light only: stops Quarto embedding extra dark-mode copies of the styles and fonts
+    theme:
+      light: [cosmo, brand, brand.scss, theme.scss]
     include-before-body: topbar.html
     include-in-header:
       text: '<link rel="icon" type="image/png" href="images/favicon.png">'
@@ -18,9 +20,14 @@ format:
     embed-resources: true
     fig-width: 8
     fig-height: 4.5
-    fig-dpi: 150
     code-fold: true
     code-summary: "Show the code"
+brand:
+  light: _brand.yml
+knitr:
+  opts_chunk:
+    dev: "ragg_png"
+    fig.retina: 2
 execute:
   echo: false
   warning: false
@@ -41,33 +48,23 @@ qc_issues    <- readRDS(here("data", "processed", "qc_issues.rds"))
 scorecard_path <- here("data", "processed", "qc_scorecard.rds")
 scorecard    <- if (file.exists(scorecard_path)) readRDS(scorecard_path) else NULL
 
-# Colours: three validated categorical colours for the sites, plus neutral ink
-site_colours <- c(
-  "Coastal Community Clinic" = "#2a78d6",
-  "Harbourview Hospital"     = "#eb6834",
-  "Riverbend Midwifery"      = "#1baf7a"
-)
-ink       <- "#0b0b0b"
-ink_soft  <- "#52514e"
-grid_col  <- "#e6e5e1"
-accent    <- "#2a78d6"
+# Shared chart style from the brand kit: fonts, white report background, ink axes
+source(here("R", "theme_eb.R"))
+eb_use("redcap-starter-kit")
 
-theme_report <- function() {
-  theme_minimal(base_size = 12) +
-    theme(
-      text               = element_text(colour = ink),
-      axis.text          = element_text(colour = ink_soft),
-      axis.title         = element_text(colour = ink_soft, size = 11),
-      panel.grid.major   = element_line(colour = grid_col, linewidth = 0.3),
-      panel.grid.minor   = element_blank(),
-      plot.title         = element_text(face = "bold", size = 14),
-      plot.subtitle      = element_text(colour = ink_soft),
-      plot.caption       = element_text(colour = ink_soft, hjust = 0),
-      plot.title.position = "plot",
-      legend.position    = "top",
-      legend.justification = "left"
-    )
-}
+# Sites: the kit's line colours (cobalt, red-orange, deep green). All three pass
+# 3:1 contrast on white and stay distinct for colourblind readers.
+site_colours <- c(
+  "Coastal Community Clinic" = eb_cat_line[1],
+  "Harbourview Hospital"     = eb_cat_line[2],
+  "Riverbend Midwifery"      = eb_cat_line[3]
+)
+ink       <- eb_col$ink
+ink_soft  <- eb_col$muted
+grid_col  <- eb_col$grid
+accent    <- eb_accent()   # plum, the project accent
+
+theme_report <- function() theme_eb(bg = "white")
 
 n_enrolled <- nrow(participants)
 n_tt       <- sum(participants$has_third_trimester)
@@ -118,7 +115,9 @@ ggplot(recruit, aes(enrol_date, cumulative, colour = site)) +
   geom_text(data = end_labels, aes(label = paste0(site, " (", cumulative, ")")),
             hjust = 0, nudge_x = 6, size = 3.6, colour = ink) +
   scale_colour_manual(values = site_colours, guide = "none") +
-  scale_x_date(date_labels = "%b %Y", expand = expansion(mult = c(0.02, 0.45))) +
+  # Date labels only up to the last enrolment (the space on the right is for the site labels)
+  scale_x_date(date_labels = "%b %Y", expand = expansion(mult = c(0.02, 0.45)),
+               breaks = \(lims) { br <- scales::breaks_pretty()(lims); br[br <= max(recruit$enrol_date)] }) +
   coord_cartesian(clip = "off") +
   labs(title = "Cumulative enrolment by site",
        subtitle = glue::glue("{n_enrolled} participants enrolled between {format(min(recruit$enrol_date), '%B %Y')} and {format(max(recruit$enrol_date), '%B %Y')}"),
@@ -248,7 +247,7 @@ n_preterm <- sum(births$ga_birth_weeks < 37)
 
 ```{r ga-plot}
 ggplot(births, aes(ga_birth_weeks)) +
-  geom_histogram(binwidth = 1, boundary = 0, fill = accent, colour = "white", linewidth = 0.6) +
+  geom_histogram(binwidth = 1, boundary = 0, fill = accent, colour = ink, linewidth = 0.3) +
   geom_vline(xintercept = 37, linetype = "dashed", colour = ink_soft) +
   annotate("text", x = 36.8, y = Inf, label = "37 weeks", hjust = 1, vjust = 1.5,
            size = 3.6, colour = ink_soft) +
@@ -283,7 +282,7 @@ delivery <- participants |>
   summarise(n = n(), rate = mean(caesarean))
 
 ggplot(delivery, aes(rate, fct_reorder(group, rate))) +
-  geom_col(fill = accent, width = 0.55) +
+  geom_col(fill = accent, colour = ink, linewidth = 0.3, width = 0.55) +
   geom_text(aes(label = glue::glue("{percent(rate, 1)} of {n}")), hjust = -0.1,
             size = 3.8, colour = ink) +
   scale_x_continuous(labels = label_percent(), limits = c(0, max(delivery$rate) * 1.35),
